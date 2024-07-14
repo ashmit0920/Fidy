@@ -1,3 +1,3 @@
-module github.com/ashmit/0920/Fidy
+module github.com/ashmit0920/Fidy
 
 go 1.22.4
