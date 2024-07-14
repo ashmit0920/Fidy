@@ -19,31 +19,42 @@ func main() {
 
 	// fmt.Printf("Hello, %s! You are %d years old.\n", *name, *age)
 
-	dir := flag.String("dir", ".", "The directory to organize")
+	// info := flag.String("info", "", "Get information about fidy")
+	name := flag.String("name", "", "Name to greet")
+	dir := flag.String("dir", "", "The directory to organize")
 	flag.Parse()
 
-	files, err := os.ReadDir(*dir)
-	if err != nil {
-		fmt.Println("Error reading directory: ", err)
-		os.Exit(1)
-	}
+	if *dir != "" {
 
-	for _, file := range files {
-		if !file.IsDir() {
-			ext := filepath.Ext(file.Name())
-			if ext != "" {
-				ext = ext[1:] // Removing the dot
-				targetDir := filepath.Join(*dir, ext)
-				if _, err := os.Stat(targetDir); os.IsNotExist(err) {
-					os.Mkdir(targetDir, os.ModePerm)
+		files, err := os.ReadDir(*dir)
+		if err != nil {
+			fmt.Println("Error reading directory: ", err)
+			os.Exit(1)
+		}
+
+		for _, file := range files {
+			if !file.IsDir() {
+				ext := filepath.Ext(file.Name())
+				if ext != "" {
+					ext = ext[1:] // Removing the dot
+					targetDir := filepath.Join(*dir, ext)
+					if _, err := os.Stat(targetDir); os.IsNotExist(err) {
+						os.Mkdir(targetDir, os.ModePerm)
+					}
+
+					oldPath := filepath.Join(*dir, file.Name())
+					newPath := filepath.Join(targetDir, file.Name())
+					os.Rename(oldPath, newPath)
 				}
-
-				oldPath := filepath.Join(*dir, file.Name())
-				newPath := filepath.Join(targetDir, file.Name())
-				os.Rename(oldPath, newPath)
 			}
 		}
+
+		fmt.Println("Files organized by extension in", *dir)
 	}
 
-	fmt.Println("Files organized by extension in", *dir)
+	if *name == "" {
+		fmt.Println("Hey there, please provide a name to greet using 'fidy -name YOUR_NAME'")
+	} else {
+		fmt.Printf("Hey %s! Please use -help to learn about Fidy's commands. Use -info to learn more about this tool's developer.", *name)
+	}
 }
