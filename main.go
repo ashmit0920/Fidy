@@ -58,7 +58,7 @@ func main() {
 		fmt.Println("\nFidy helps you organize your files by sorting them into directories based on their extensions.")
 		fmt.Println("\nUsage:")
 		fmt.Println("")
-		fmt.Println("  -info           : Show information about Fidy.")
+		fmt.Println("  -help           : Show information about Fidy.")
 		fmt.Println("  -name <name>    : Set your name to personalize Fidy's greetings.")
 		fmt.Println("  -dir <path>     : Specify the directory to organize. Use 'fidy -dir .' for current directory.")
 		fmt.Println("  -include <exts> : Comma-separated list of extensions to include.")

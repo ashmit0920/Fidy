@@ -33,6 +33,7 @@ Display info about Fidy
 ```
 fidy -help
 ```
+![help](./assets/help.png)
 
 Fidy can remember your name and send personalized greetings! Set your name using the command:
 ```
