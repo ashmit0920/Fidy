@@ -18,7 +18,9 @@ func main() {
 	name := flag.String("name", "", "The user's name")
 	dir := flag.String("dir", "", "The directory to organize")
 	info := flag.Bool("info", false, "Show information about fidy")
-	exclude := flag.String("exclude", "", "Comma-separated list of extensions to exclude.")
+	exclude := flag.String("exclude", "", "Comma-separated list of extensions to exclude")
+	verbose := flag.Bool("verbose", false, "Enable verbose output")
+	dryrun := flag.Bool("dryrun", false, "Simulate the file organization without doing any actual changes")
 
 	flag.Parse()
 
@@ -54,10 +56,13 @@ func main() {
 		fmt.Println("\n---------- Fidy - The File Organizer CLI Tool ----------")
 		fmt.Println("\nFidy helps you organize your files by sorting them into directories based on their extensions.")
 		fmt.Println("\nUsage:")
+		fmt.Println("")
 		fmt.Println("  -info           : Show information about Fidy.")
 		fmt.Println("  -name <name>    : Set your name to personalize Fidy's greetings.")
 		fmt.Println("  -dir <path>     : Specify the directory to organize. Default is the current directory.")
 		fmt.Println("  -exclude <exts> : Comma-separated list of extensions to exclude.")
+		fmt.Println("  -verbose        : Enable verbose output.")
+		fmt.Println("  -dryrun         : Simulate the file organization without doing any actual changes.")
 		fmt.Println("")
 		return
 	}
@@ -91,12 +96,22 @@ func main() {
 
 					targetDir := filepath.Join(*dir, ext)
 					if _, err := os.Stat(targetDir); os.IsNotExist(err) {
-						os.Mkdir(targetDir, os.ModePerm)
+						if *verbose || *dryrun {
+							fmt.Printf("Creating directory %s\n", targetDir)
+						}
+						if !*dryrun {
+							os.Mkdir(targetDir, os.ModePerm) // make the new dir if dryrun is false
+						}
 					}
 
 					oldPath := filepath.Join(*dir, file.Name())
 					newPath := filepath.Join(targetDir, file.Name())
-					os.Rename(oldPath, newPath)
+					if *verbose || *dryrun {
+						fmt.Printf("Moving file: %s -> %s \n", oldPath, newPath)
+					}
+					if !*dryrun {
+						os.Rename(oldPath, newPath)
+					}
 				}
 			}
 		}
