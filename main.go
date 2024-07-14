@@ -1,28 +1,51 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
 	"path/filepath"
 )
 
+type Config struct {
+	Name string `json:"name"`
+}
+
 func main() {
-	// name := flag.String("name", "World", "Name to greet")
-	// age := flag.Int("age", 0, "Age of the person")
-	// flag.Parse()
-
-	// if *age <= 0 {
-	// 	fmt.Println("Please provide a valid age.")
-	// 	os.Exit(1)
-	// }
-
-	// fmt.Printf("Hello, %s! You are %d years old.\n", *name, *age)
 
 	// info := flag.String("info", "", "Get information about fidy")
-	name := flag.String("name", "", "Name to greet")
+	name := flag.String("name", "", "The user's name")
 	dir := flag.String("dir", "", "The directory to organize")
 	flag.Parse()
+
+	configFile := "config.json"
+	var config Config
+
+	// Read existing configuration if available
+	if _, err := os.Stat(configFile); err == nil {
+		data, err := os.ReadFile(configFile)
+		if err == nil {
+			json.Unmarshal(data, &config)
+		}
+	}
+
+	// Update the config file with name (if provided)
+	if *name != "" {
+		config.Name = *name
+		data, _ := json.Marshal(config)
+		os.WriteFile(configFile, data, os.ModePerm)
+		fmt.Println("Name updated! Nice to meet you", *name)
+	}
+
+	// Default message without flags
+	if len(os.Args) == 1 {
+		if config.Name != "" {
+			fmt.Printf("Hey, I am Fidy. Nice to see you, %s!\n", config.Name)
+		} else {
+			fmt.Println("Hey, I am Fidy. You can let me know your name by using 'fidy -name YOUR_NAME' for our future conversations!")
+		}
+	}
 
 	if *dir != "" {
 
@@ -50,11 +73,5 @@ func main() {
 		}
 
 		fmt.Println("Files organized by extension in", *dir)
-	}
-
-	if *name == "" {
-		fmt.Println("Hey there, please provide a name to greet using 'fidy -name YOUR_NAME'")
-	} else {
-		fmt.Printf("Hey %s! Please use -help to learn about Fidy's commands. Use -info to learn more about this tool's developer.", *name)
 	}
 }
