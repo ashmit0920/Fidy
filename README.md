@@ -25,6 +25,7 @@ Run fidy
 ```
 fidy
 ```
+**Update:** Fidy will be released soon as a binary for Windows, Linux and MacOS!
 
 ## Usage
 
