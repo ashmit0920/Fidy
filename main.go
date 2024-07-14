@@ -70,6 +70,8 @@ func main() {
 	if *dir != "" {
 		excludeExtensions := strings.Split(*exclude, ",") // list of excluded extensions
 
+		createdDirs := make(map[string]bool) // Tracking created directories for verbose/dryrun mode
+
 		files, err := os.ReadDir(*dir)
 		if err != nil {
 			fmt.Println("Error reading directory: ", err)
@@ -95,12 +97,19 @@ func main() {
 					}
 
 					targetDir := filepath.Join(*dir, ext)
+
 					if _, err := os.Stat(targetDir); os.IsNotExist(err) {
-						if *verbose || *dryrun {
-							fmt.Printf("Creating directory %s\n", targetDir)
-						}
-						if !*dryrun {
-							os.Mkdir(targetDir, os.ModePerm) // make the new dir if dryrun is false
+
+						// checking if directory is already created
+						if _, exists := createdDirs[targetDir]; !exists {
+
+							if *verbose || *dryrun {
+								fmt.Printf("\nCreating directory %s\n", targetDir)
+							}
+							if !*dryrun {
+								os.Mkdir(targetDir, os.ModePerm) // make the new dir if dryrun is false
+							}
+							createdDirs[targetDir] = true
 						}
 					}
 
@@ -116,6 +125,6 @@ func main() {
 			}
 		}
 
-		fmt.Println("Files organized by extension in", *dir)
+		fmt.Println("\nFiles organized by extension in", *dir)
 	}
 }
