@@ -14,9 +14,10 @@ type Config struct {
 
 func main() {
 
-	// info := flag.String("info", "", "Get information about fidy")
 	name := flag.String("name", "", "The user's name")
 	dir := flag.String("dir", "", "The directory to organize")
+	info := flag.Bool("info", false, "Show information about fidy")
+
 	flag.Parse()
 
 	configFile := "config.json"
@@ -45,6 +46,17 @@ func main() {
 		} else {
 			fmt.Println("Hey, I am Fidy. You can let me know your name by using 'fidy -name YOUR_NAME' for our future conversations!")
 		}
+	}
+
+	if *info {
+		fmt.Println("\n---------- Fidy - The File Organizer CLI Tool ----------")
+		fmt.Println("\nFidy helps you organize your files by sorting them into directories based on their extensions.")
+		fmt.Println("\nUsage:")
+		fmt.Println("  -name <name> : Set your name to personalize Fidy's greetings.")
+		fmt.Println("  -dir <path>  : Specify the directory to organize. Default is the current directory.")
+		fmt.Println("  -info        : Show information about Fidy.")
+		fmt.Println("")
+		return
 	}
 
 	if *dir != "" {
