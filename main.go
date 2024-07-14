@@ -18,6 +18,7 @@ func main() {
 	name := flag.String("name", "", "The user's name")
 	dir := flag.String("dir", "", "The directory to organize")
 	info := flag.Bool("info", false, "Show information about fidy")
+	include := flag.String("include", "", "Comma-separated list of extensions to include")
 	exclude := flag.String("exclude", "", "Comma-separated list of extensions to exclude")
 	verbose := flag.Bool("verbose", false, "Enable verbose output")
 	dryrun := flag.Bool("dryrun", false, "Simulate the file organization without doing any actual changes")
@@ -59,7 +60,8 @@ func main() {
 		fmt.Println("")
 		fmt.Println("  -info           : Show information about Fidy.")
 		fmt.Println("  -name <name>    : Set your name to personalize Fidy's greetings.")
-		fmt.Println("  -dir <path>     : Specify the directory to organize. Default is the current directory.")
+		fmt.Println("  -dir <path>     : Specify the directory to organize. Use 'fidy -dir .' for current directory.")
+		fmt.Println("  -include <exts> : Comma-separated list of extensions to include.")
 		fmt.Println("  -exclude <exts> : Comma-separated list of extensions to exclude.")
 		fmt.Println("  -verbose        : Enable verbose output.")
 		fmt.Println("  -dryrun         : Simulate the file organization without doing any actual changes.")
@@ -69,6 +71,7 @@ func main() {
 
 	if *dir != "" {
 		excludeExtensions := strings.Split(*exclude, ",") // list of excluded extensions
+		includeExtensions := strings.Split(*include, ",") // list of included extensions
 
 		createdDirs := make(map[string]bool) // Tracking created directories for verbose/dryrun mode
 
@@ -93,6 +96,17 @@ func main() {
 						}
 					}
 					if exc {
+						continue
+					}
+
+					inc := false
+					for _, includeExt := range includeExtensions {
+						if ext == includeExt {
+							inc = true
+							break
+						}
+					}
+					if !inc {
 						continue
 					}
 
