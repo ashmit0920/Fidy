@@ -17,7 +17,7 @@ func main() {
 
 	name := flag.String("name", "", "The user's name")
 	dir := flag.String("dir", "", "The directory to organize")
-	info := flag.Bool("info", false, "Show information about fidy")
+	help := flag.Bool("help", false, "Show information about fidy")
 	include := flag.String("include", "", "Comma-separated list of extensions to include")
 	exclude := flag.String("exclude", "", "Comma-separated list of extensions to exclude")
 	verbose := flag.Bool("verbose", false, "Enable verbose output")
@@ -53,7 +53,7 @@ func main() {
 		}
 	}
 
-	if *info {
+	if *help {
 		fmt.Println("\n---------- Fidy - The File Organizer CLI Tool ----------")
 		fmt.Println("\nFidy helps you organize your files by sorting them into directories based on their extensions.")
 		fmt.Println("\nUsage:")
