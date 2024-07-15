@@ -75,14 +75,6 @@ func main() {
 		return
 	}
 
-	// Read existing configuration if available
-	// if _, err := os.Stat(configFile); err == nil {
-	// 	data, err := os.ReadFile(configFile)
-	// 	if err == nil {
-	// 		json.Unmarshal(data, &config)
-	// 	}
-	// }
-
 	// Update the config file with name (if provided)
 	if *name != "" {
 		config.Name = *name
@@ -103,7 +95,15 @@ func main() {
 	}
 
 	if *help {
-		fmt.Println("\n---------- Fidy - The File Organizer CLI Tool ----------")
+		fmt.Println("")
+		fmt.Println("     ________   _______     _______      ___     ___")
+		fmt.Println("    / ______/  /__  __/    / _____ \\    /  /    /  /")
+		fmt.Println("   / /____       / /      / /    / /   /  /____/  /")
+		fmt.Println("  / _____/      / /      / /    / /   /___   ____/")
+		fmt.Println(" / /         __/ /__    / /____/ /       /  /")
+		fmt.Println("/_/         /______/   /________/       /__/")
+
+		fmt.Println("\n---------- The File Organizer CLI Tool ----------")
 		fmt.Println("\nFidy helps you organize your files by sorting them into directories based on their extensions.")
 		fmt.Println("\nUsage:")
 		fmt.Println("")
@@ -148,21 +148,22 @@ func main() {
 						continue
 					}
 
-					inc := false
-					for _, includeExt := range includeExtensions {
-						if ext == includeExt {
-							inc = true
-							break
+					if *include != "" {
+						inc := false
+						for _, includeExt := range includeExtensions {
+							if ext == includeExt {
+								inc = true
+								break
+							}
 						}
-					}
-					if !inc {
-						continue
+						if !inc {
+							continue
+						}
 					}
 
 					targetDir := filepath.Join(*dir, ext)
 
 					if _, err := os.Stat(targetDir); os.IsNotExist(err) {
-
 						// checking if directory is already created
 						if _, exists := createdDirs[targetDir]; !exists {
 
@@ -190,4 +191,34 @@ func main() {
 
 		fmt.Println("\nFiles organized by extension in", *dir)
 	}
+
+	// if *cleanAll {
+	// 	cleanEmptyDirs(".")
+	// }
 }
+
+// func cleanEmptyDirs(dir string) {
+// 	files, err := os.ReadDir(dir)
+// 	if err != nil {
+// 		fmt.Println("Error reading directory:", err)
+// 		return
+// 	}
+
+// 	for _, file := range files {
+// 		if file.IsDir() {
+// 			subDir := filepath.Join(dir, file.Name())
+// 			cleanEmptyDirs(subDir)
+// 			subFiles, err := os.ReadDir(subDir)
+// 			if err != nil {
+// 				fmt.Println("Error reading subdirectory:", err)
+// 				continue
+// 			}
+// 			if len(subFiles) == 0 {
+// 				fmt.Printf("Deleting empty directory: %s\n", subDir)
+// 				if err := os.Remove(subDir); err != nil {
+// 					fmt.Println("Error deleting directory:", err)
+// 				}
+// 			}
+// 		}
+// 	}
+// }
