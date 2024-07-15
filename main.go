@@ -13,6 +13,50 @@ type Config struct {
 	Name string `json:"name"`
 }
 
+func getConfigFilePath() (string, error) {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		return "", err
+	}
+	configDir := filepath.Join(homeDir, ".fidy")
+	if err := os.MkdirAll(configDir, os.ModePerm); err != nil {
+		return "", err
+	}
+	return filepath.Join(configDir, "config.json"), nil
+}
+
+func loadConfig() (*Config, error) {
+	configFilePath, err := getConfigFilePath()
+	if err != nil {
+		return nil, err
+	}
+	file, err := os.ReadFile(configFilePath)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return &Config{}, nil
+		}
+		return nil, err
+	}
+	var config Config
+	err = json.Unmarshal(file, &config)
+	if err != nil {
+		return nil, err
+	}
+	return &config, nil
+}
+
+func saveConfig(config *Config) error {
+	configFilePath, err := getConfigFilePath()
+	if err != nil {
+		return err
+	}
+	file, err := json.MarshalIndent(config, "", "  ")
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(configFilePath, file, os.ModePerm)
+}
+
 func main() {
 
 	name := flag.String("name", "", "The user's name")
@@ -25,22 +69,27 @@ func main() {
 
 	flag.Parse()
 
-	configFile := "config.json"
-	var config Config
+	config, err := loadConfig()
+	if err != nil {
+		fmt.Println("Error loading config:", err)
+		return
+	}
 
 	// Read existing configuration if available
-	if _, err := os.Stat(configFile); err == nil {
-		data, err := os.ReadFile(configFile)
-		if err == nil {
-			json.Unmarshal(data, &config)
-		}
-	}
+	// if _, err := os.Stat(configFile); err == nil {
+	// 	data, err := os.ReadFile(configFile)
+	// 	if err == nil {
+	// 		json.Unmarshal(data, &config)
+	// 	}
+	// }
 
 	// Update the config file with name (if provided)
 	if *name != "" {
 		config.Name = *name
-		data, _ := json.Marshal(config)
-		os.WriteFile(configFile, data, os.ModePerm)
+		if err := saveConfig(config); err != nil {
+			fmt.Println("Error saving config:", err)
+			return
+		}
 		fmt.Println("Name updated! Nice to meet you", *name)
 	}
 
