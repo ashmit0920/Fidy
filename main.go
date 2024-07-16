@@ -66,6 +66,7 @@ func main() {
 	exclude := flag.String("exclude", "", "Comma-separated list of extensions to exclude")
 	verbose := flag.Bool("verbose", false, "Enable verbose output")
 	dryrun := flag.Bool("dryrun", false, "Simulate the file organization without doing any actual changes")
+	cleanAll := flag.Bool("cleanAll", false, "Delete all the empty folders and sub-folders in the specified directory after organizing files.")
 
 	flag.Parse()
 
@@ -114,6 +115,7 @@ func main() {
 		fmt.Println("  -exclude <exts> : Comma-separated list of extensions to exclude.")
 		fmt.Println("  -verbose        : Enable verbose output.")
 		fmt.Println("  -dryrun         : Simulate the file organization without doing any actual changes.")
+		fmt.Println("  -cleanAll       : Delete all the empty folders and sub-folders in the specified directory after organizing files.")
 		fmt.Println("")
 		return
 	}
@@ -189,36 +191,38 @@ func main() {
 			}
 		}
 
-		fmt.Println("\nFiles organized by extension in", *dir)
+		fmt.Printf("\nFiles organized by extension in %s \n", *dir)
 	}
 
-	// if *cleanAll {
-	// 	cleanEmptyDirs(".")
-	// }
+	if *cleanAll {
+		cleanEmptyDirs(*dir, *dryrun)
+	}
 }
 
-// func cleanEmptyDirs(dir string) {
-// 	files, err := os.ReadDir(dir)
-// 	if err != nil {
-// 		fmt.Println("Error reading directory:", err)
-// 		return
-// 	}
+func cleanEmptyDirs(dir string, dryrun bool) {
+	files, err := os.ReadDir(dir)
+	if err != nil {
+		fmt.Println("Error reading directory:", err)
+		return
+	}
 
-// 	for _, file := range files {
-// 		if file.IsDir() {
-// 			subDir := filepath.Join(dir, file.Name())
-// 			cleanEmptyDirs(subDir)
-// 			subFiles, err := os.ReadDir(subDir)
-// 			if err != nil {
-// 				fmt.Println("Error reading subdirectory:", err)
-// 				continue
-// 			}
-// 			if len(subFiles) == 0 {
-// 				fmt.Printf("Deleting empty directory: %s\n", subDir)
-// 				if err := os.Remove(subDir); err != nil {
-// 					fmt.Println("Error deleting directory:", err)
-// 				}
-// 			}
-// 		}
-// 	}
-// }
+	for _, file := range files {
+		if file.IsDir() {
+			subDir := filepath.Join(dir, file.Name())
+			cleanEmptyDirs(subDir, dryrun)
+			subFiles, err := os.ReadDir(subDir)
+			if err != nil {
+				fmt.Println("Error reading subdirectory:", err)
+				continue
+			}
+			if len(subFiles) == 0 {
+				fmt.Printf("Deleting empty directory: %s\n", subDir)
+				if !dryrun {
+					if err := os.Remove(subDir); err != nil {
+						fmt.Println("Error deleting directory:", err)
+					}
+				}
+			}
+		}
+	}
+}
