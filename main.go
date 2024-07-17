@@ -13,6 +13,8 @@ type Config struct {
 	Name string `json:"name"`
 }
 
+const ver = "1.2.1"
+
 func getConfigFilePath() (string, error) {
 	homeDir, err := os.UserHomeDir()
 	if err != nil {
@@ -67,6 +69,7 @@ func main() {
 	verbose := flag.Bool("verbose", false, "Enable verbose output")
 	dryrun := flag.Bool("dryrun", false, "Simulate the file organization without doing any actual changes")
 	cleanAll := flag.Bool("cleanAll", false, "Delete all the empty folders and sub-folders in the specified directory after organizing files.")
+	version := flag.Bool("version", false, "Display Fidy's current version installed in your system.")
 
 	flag.Parse()
 
@@ -109,6 +112,7 @@ func main() {
 		fmt.Println("\nUsage:")
 		fmt.Println("")
 		fmt.Println("  -help           : Show information about Fidy.")
+		fmt.Println("  -version        : Display Fidy's current version installed in your system.")
 		fmt.Println("  -name <name>    : Set your name to personalize Fidy's greetings.")
 		fmt.Println("  -dir <path>     : Specify the directory to organize. Use 'fidy -dir .' for current directory.")
 		fmt.Println("  -include <exts> : Comma-separated list of extensions to include.")
@@ -117,6 +121,11 @@ func main() {
 		fmt.Println("  -dryrun         : Simulate the file organization without doing any actual changes.")
 		fmt.Println("  -cleanAll       : Delete all the empty folders and sub-folders in the specified directory after organizing files.")
 		fmt.Println("")
+		return
+	}
+
+	if *version {
+		fmt.Printf("\nFidy version %s\n\n", ver)
 		return
 	}
 
