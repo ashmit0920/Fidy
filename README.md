@@ -10,11 +10,11 @@ Fidy is a command-line tool for organizing files in a directory based on their e
 - **Verbose Mode**: Get detailed output of the operations performed.
 - **Dry Run**: Simulate the organization process without making any changes.
 - **Custom Greetings**: Save a custom name to personalize your Fidy experience.
-- **Custom Extensions**: Add or remove extensions to be considered using -include/-exclude flags.
+- **Clean empty directories**: Recursively delete all empty folders and sub-folders within the target directory.
 
 ## Installation
 
-#### 1. Download the installer executable for Windows. (Recommended)
+### 1. Download the installer executable for Windows. (Recommended)
 
 The installer file can be downloaded from [Fidy Installer](./deployment/fidy_Installer.exe). Download the exe file and run it to install Fidy.
 
@@ -23,7 +23,7 @@ Open your terminal and run Fidy!
 fidy
 ```
 
-#### 2. Install using 'go install' command.
+### 2. Install using 'go install' command.
 
 Make sure you have [Go](https://go.dev/doc/install) installed in your system.
 
@@ -84,7 +84,6 @@ fidy -dir PATH_TO_YOUR_DIR -cleanAll -verbose
 ## Upcoming features
 
 - Log file
-- Delete empty directories automatically
 - Custom directory naming
 - Backup before running Fidy
 - Recursive organization for sub-directories
