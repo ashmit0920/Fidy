@@ -14,6 +14,17 @@ Fidy is a command-line tool for organizing files in a directory based on their e
 
 ## Installation
 
+#### 1. Download the installer executable for Windows. (Recommended)
+
+The installer file can be downloaded from [Fidy Installer](./deployment/fidy_Installer.exe). Download the exe file and run it to install Fidy.
+
+Open your terminal and run Fidy!
+```
+fidy
+```
+
+#### 2. Install using 'go install' command.
+
 Make sure you have [Go](https://go.dev/doc/install) installed in your system.
 
 You can install Fidy using the following command in your terminal:
@@ -25,7 +36,7 @@ Run fidy
 ```
 fidy
 ```
-**Update:** Fidy will be released soon as a binary for Windows, Linux and MacOS!
+**Update:** Fidy will be released soon as a binary for Linux and MacOS!
 
 ## Usage
 
@@ -38,6 +49,11 @@ fidy -help
 Fidy can remember your name and send personalized greetings! Set your name using the command:
 ```
 fidy -name YOUR_NAME
+```
+
+Check the installed version
+```
+fidy -version
 ```
 
 Organize a directory
@@ -58,6 +74,11 @@ fidy -dir PATH_TO_YOUR_DIR -verbose
 Perform a Dry Run, without doing any actual changes to your directory.
 ```
 fidy -dir PATH_TO_YOUR_DIR -dryrun -include txt,png -exclude pdf
+```
+
+Clean all the empty folders and sub-folders within your target directory.
+```
+fidy -dir PATH_TO_YOUR_DIR -cleanAll -verbose
 ```
 
 ## Upcoming features
