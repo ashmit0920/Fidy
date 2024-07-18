@@ -4,6 +4,8 @@
 
 Fidy is a command-line tool for organizing files in a directory based on their extensions. It helps you keep your workspace tidy by categorizing files into folders named after their extensions.
 
+![help](./assets/help.png)
+
 ## Features
 
 - **Organize Files by Extension**: Automatically move files into directories based on their file extensions.
@@ -22,6 +24,7 @@ Open your terminal and run Fidy!
 ```
 fidy
 ```
+![run fidy](./assets/run%20fidy.png)
 
 ### 2. Install using 'go install' command.
 
@@ -44,7 +47,6 @@ Display info about Fidy
 ```
 fidy -help
 ```
-![help](./assets/help.png)
 
 Fidy can remember your name and send personalized greetings! Set your name using the command:
 ```
@@ -76,6 +78,12 @@ Perform a Dry Run, without doing any actual changes to your directory.
 fidy -dir PATH_TO_YOUR_DIR -dryrun -include txt,png -exclude pdf
 ```
 
+Give custom names to folders created by Fidy for each extension.
+```
+fidy -dir PATH_TO_YOUR_DIR -custom png=Images,pdf=Documents,mp4=Videos
+```
+![custom flag](./assets/custom%20flag.png)
+
 Clean all the empty folders and sub-folders within your target directory.
 ```
 fidy -dir PATH_TO_YOUR_DIR -cleanAll -verbose
@@ -84,6 +92,5 @@ fidy -dir PATH_TO_YOUR_DIR -cleanAll -verbose
 ## Upcoming features
 
 - Log file
-- Custom directory naming
 - Backup before running Fidy
 - Recursive organization for sub-directories
