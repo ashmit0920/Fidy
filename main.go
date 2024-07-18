@@ -93,9 +93,9 @@ func main() {
 	// Default message without flags
 	if len(os.Args) == 1 {
 		if config.Name != "" {
-			fmt.Printf("\nHey, I am Fidy. Nice to see you, %s!\n\n", config.Name)
+			fmt.Printf("\nHey, I am Fidy. Nice to see you, %s!\n", config.Name)
 		} else {
-			fmt.Printf("\nHey, I am Fidy. You can let me know your name by using 'fidy -name YOUR_NAME' for our future conversations!\n\n")
+			fmt.Printf("\nHey, I am Fidy. You can let me know your name by using 'fidy -name YOUR_NAME' for our future conversations!\n")
 		}
 	}
 
@@ -127,7 +127,7 @@ func main() {
 	}
 
 	if *version {
-		fmt.Printf("\nFidy version %s\n\n", ver)
+		fmt.Printf("\nFidy version %s\n", ver)
 		return
 	}
 
