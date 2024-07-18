@@ -9,9 +9,10 @@ Fidy is a command-line tool for organizing files in a directory based on their e
 ## Features
 
 - **Organize Files by Extension**: Automatically move files into directories based on their file extensions.
+- **Custom Greetings**: Save a custom name to personalize your Fidy experience.
 - **Verbose Mode**: Get detailed output of the operations performed.
 - **Dry Run**: Simulate the organization process without making any changes.
-- **Custom Greetings**: Save a custom name to personalize your Fidy experience.
+- **Custom folder names**: Customise the folder names created by Fidy for each file extension.
 - **Clean empty directories**: Recursively delete all empty folders and sub-folders within the target directory.
 
 ## Installation
@@ -73,7 +74,7 @@ Organize files with verbose output
 fidy -dir PATH_TO_YOUR_DIR -verbose
 ```
 
-Perform a Dry Run, without doing any actual changes to your directory.
+Perform a Dry Run to simulate the process, without doing any actual changes to your directory.
 ```
 fidy -dir PATH_TO_YOUR_DIR -dryrun -include txt,png -exclude pdf
 ```
