@@ -13,7 +13,7 @@ type Config struct {
 	Name string `json:"name"`
 }
 
-const ver = "1.2.1"
+const ver = "1.2.2"
 
 func getConfigFilePath() (string, error) {
 	homeDir, err := os.UserHomeDir()
@@ -70,6 +70,7 @@ func main() {
 	dryrun := flag.Bool("dryrun", false, "Simulate the file organization without doing any actual changes")
 	cleanAll := flag.Bool("cleanAll", false, "Delete all the empty folders and sub-folders in the specified directory after organizing files.")
 	version := flag.Bool("version", false, "Display Fidy's current version installed in your system.")
+	custom := flag.String("custom", "", "Comma-separated list of custom directory names for each extension")
 
 	flag.Parse()
 
@@ -92,9 +93,9 @@ func main() {
 	// Default message without flags
 	if len(os.Args) == 1 {
 		if config.Name != "" {
-			fmt.Printf("Hey, I am Fidy. Nice to see you, %s!\n", config.Name)
+			fmt.Printf("\nHey, I am Fidy. Nice to see you, %s!\n\n", config.Name)
 		} else {
-			fmt.Println("Hey, I am Fidy. You can let me know your name by using 'fidy -name YOUR_NAME' for our future conversations!")
+			fmt.Printf("\nHey, I am Fidy. You can let me know your name by using 'fidy -name YOUR_NAME' for our future conversations!\n\n")
 		}
 	}
 
@@ -117,6 +118,7 @@ func main() {
 		fmt.Println("  -dir <path>     : Specify the directory to organize. Use 'fidy -dir .' for current directory.")
 		fmt.Println("  -include <exts> : Comma-separated list of extensions to include.")
 		fmt.Println("  -exclude <exts> : Comma-separated list of extensions to exclude.")
+		fmt.Println("  -custom <names> : Comma-separated list of custom folder names for each extension, for example '-custom txt=TextFiles,png=Images'")
 		fmt.Println("  -verbose        : Enable verbose output.")
 		fmt.Println("  -dryrun         : Simulate the file organization without doing any actual changes.")
 		fmt.Println("  -cleanAll       : Delete all the empty folders and sub-folders in the specified directory after organizing files.")
@@ -132,8 +134,22 @@ func main() {
 	if *dir != "" {
 		excludeExtensions := strings.Split(*exclude, ",") // list of excluded extensions
 		includeExtensions := strings.Split(*include, ",") // list of included extensions
+		customNames := strings.Split(*custom, ",")        // list of custom folder names
 
 		createdDirs := make(map[string]bool) // Tracking created directories for verbose/dryrun mode
+		customDir := make(map[string]string) // Tracking custom folder names, if specified
+
+		if *custom != "" {
+			for _, customName := range customNames {
+				dirName := strings.Split(customName, "=")  // list with ext name and custom dir name for it
+				if len(dirName) == 2 && dirName[1] != "" { //ensuring proper syntax
+					customDir[strings.TrimSpace(dirName[0])] = strings.TrimSpace(dirName[1])
+				} else {
+					fmt.Printf("\nInvalid custom folder name. Please make sure there are no blank spaces in between the command. \nSample input: fidy -dir YOUR_DIR -custom txt=TextFiles,png=Images \n\n")
+					return
+				}
+			}
+		}
 
 		files, err := os.ReadDir(*dir)
 		if err != nil {
@@ -169,6 +185,12 @@ func main() {
 						}
 						if !inc {
 							continue
+						}
+					}
+
+					if *custom != "" {
+						if _, exists := customDir[ext]; exists {
+							ext = customDir[ext] // if a custom name is specified, change the folder name (ext) to custom name
 						}
 					}
 
