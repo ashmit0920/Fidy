@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"io"
+	"io/fs"
 	"os"
 	"path/filepath"
 	"strings"
@@ -67,10 +69,11 @@ func main() {
 	include := flag.String("include", "", "Comma-separated list of extensions to include")
 	exclude := flag.String("exclude", "", "Comma-separated list of extensions to exclude")
 	verbose := flag.Bool("verbose", false, "Enable verbose output")
-	dryrun := flag.Bool("dryrun", false, "Simulate the file organization without doing any actual changes")
+	dryrun := flag.Bool("dryrun", false, "Simulate the file organization without doing any actual changes.")
 	cleanAll := flag.Bool("cleanAll", false, "Delete all the empty folders and sub-folders in the specified directory after organizing files.")
 	version := flag.Bool("version", false, "Display Fidy's current version installed in your system.")
-	custom := flag.String("custom", "", "Comma-separated list of custom directory names for each extension")
+	custom := flag.String("custom", "", "Comma-separated list of custom directory names for each extension.")
+	backup := flag.String("backup", "", "The Backup directory to take a backup of all files that would be organized.")
 
 	flag.Parse()
 
@@ -122,6 +125,7 @@ func main() {
 		fmt.Println("  -verbose        : Enable verbose output.")
 		fmt.Println("  -dryrun         : Simulate the file organization without doing any actual changes.")
 		fmt.Println("  -cleanAll       : Delete all the empty folders and sub-folders in the specified directory after organizing files.")
+		fmt.Println("  -backup         : The Backup directory to take a backup of all files that would be organized.")
 		fmt.Println("")
 		return
 	}
@@ -129,6 +133,15 @@ func main() {
 	if *version {
 		fmt.Printf("\nFidy version %s\n\n", ver)
 		return
+	}
+
+	if *backup != "" {
+		if *dir == "" {
+			fmt.Printf("Error: Please specify the target directory to be organized using '-dir'.") // error if -dir is not specified but -backup is provided
+			return
+		}
+
+		fmt.Printf("\nBackup directory created at %s/Fidy Backup\n\n", *backup) // Print the backup dir path
 	}
 
 	if *dir != "" {
@@ -212,6 +225,11 @@ func main() {
 
 					oldPath := filepath.Join(*dir, file.Name())
 					newPath := filepath.Join(targetDir, file.Name())
+
+					if *backup != "" {
+						createBackup(*backup, *dryrun, file, oldPath) // Take a backup if specified
+					}
+
 					if *verbose || *dryrun {
 						fmt.Printf("Moving file: %s -> %s \n", oldPath, newPath)
 					}
@@ -222,7 +240,7 @@ func main() {
 			}
 		}
 
-		fmt.Printf("\nFiles organized by extension in %s \n", *dir)
+		fmt.Printf("\nFiles organized by extension in %s \n\n", *dir)
 	}
 
 	if *cleanAll {
@@ -254,6 +272,39 @@ func cleanEmptyDirs(dir string, dryrun bool) {
 					}
 				}
 			}
+		}
+	}
+}
+
+func createBackup(dest string, dryrun bool, file fs.DirEntry, oldpath string) {
+	dest = filepath.Join(dest, "Fidy Backup")
+
+	if !dryrun {
+		err := os.MkdirAll(dest, os.ModePerm)
+		if err != nil {
+			fmt.Println("Error creating backup directory:", err)
+			return
+		}
+
+		source, err := os.Open(oldpath)
+		if err != nil {
+			fmt.Println("Error opening source file", file.Name(), "while creating Backup:", err)
+			return
+		}
+		defer source.Close()
+
+		dest = filepath.Join(dest, file.Name())
+		destination, err := os.Create(dest)
+		if err != nil {
+			fmt.Println("Error creating destination file while creating Backup:", err)
+			return
+		}
+		defer destination.Close()
+
+		_, err = io.Copy(destination, source)
+		if err != nil {
+			fmt.Println("Error copying file while creating Backup:", err)
+			return
 		}
 	}
 }
