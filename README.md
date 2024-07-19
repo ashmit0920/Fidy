@@ -90,6 +90,12 @@ Clean all the empty folders and sub-folders within your target directory.
 fidy -dir PATH_TO_YOUR_DIR -cleanAll -verbose
 ```
 
+Fidy can take a backup of all your files before organizing them. Use the `-backup` flag to specify the directory where you want your backup folder to be created. 
+```
+fidy -dir PATH_TO_YOUR_DIR -backup PATH_TO_BACKUP_DIR -include png -custom png=Images -verbose
+```
+![backup flag](./assets/backup%20flag.png)
+
 ## Upcoming features
 
 - Log file
